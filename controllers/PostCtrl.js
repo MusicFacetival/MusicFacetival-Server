@@ -35,12 +35,10 @@ exports.upload = async(req, res, next) => {
     });
 
 
-
-    // console.log('s3', s3Images);
-
   } catch (error) {
     return next(error);
   }
 
-  return res.r(result.FaceDetails[0].Emotions);
+
+  return res.r(`${result.FaceDetails[0].Emotions[0].Type} Song`);
 };
