@@ -15,25 +15,32 @@ exports.upload = async(req, res, next) => {
       "accessKeyId": awsConfig.accessKeyId,
       "secretAccessKey": awsConfig.secretAccessKey,
       "region": awsConfig.region,
-      "bucket": "musicfacetival",
-      "ACL": "public-read" // optional
+      "bucket": "musicfacetivall",
+      "ACL": "public-read-write" // optional
     };
 
     const rekognition = new Rekognition(params);
 
-    console.log(req.file);
-    const imagePaths = req.file;
-    // const imagePaths = `${dir}/yeri.jpg`;
-    const folder = req.file.bucket;
 
-    // const s3Images = await rekognition.uploadToS3(imagePaths, folder);
-    const s3Images = await rekognition.detectFaces(imagePaths);
+     result = await rekognition.doCall('detectFaces', {
+      Image: {
+        S3Object: {
+          Bucket: req.file.bucket,
+          Name: req.file.key
+        }
+      },
+       Attributes: [
+         'ALL'
+       ]
+    });
 
-    console.log('s3', s3Images);
+
+
+    // console.log('s3', s3Images);
 
   } catch (error) {
     return next(error);
   }
 
-  return res.r(result);
+  return res.r(result.FaceDetails[0].Emotions);
 };
